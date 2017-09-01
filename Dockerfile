@@ -6,7 +6,8 @@ RUN addgroup oauth2_proxy && adduser -G oauth2_proxy  -D -H oauth2_proxy
 # su/sudo with proper signaling inside docker
 RUN apk add --no-cache su-exec
 
-ENV OAUTH2_PROXY_VERSION="2.1"
+ENV OAUTH2_PROXY_VERSION="2.2"
+ENV GO_VERSION="1.8.1"
 
 # install zeppelin
 RUN set -xe \
@@ -17,10 +18,10 @@ RUN set -xe \
     && apk add --no-cache --virtual .build-deps \
         tar \
     \
-    && curl -O -fSL "https://github.com/bitly/oauth2_proxy/releases/download/v${OAUTH2_PROXY_VERSION}/oauth2_proxy-${OAUTH2_PROXY_VERSION}.linux-amd64.go1.6.tar.gz" \
+    && curl -O -fSL "https://github.com/bitly/oauth2_proxy/releases/download/v${OAUTH2_PROXY_VERSION}/oauth2_proxy-${OAUTH2_PROXY_VERSION}.0.linux-amd64.go${GO_VERSION}.tar.gz" \
     && mkdir /oauth2_proxy \
-    && tar -xf oauth2_proxy-${OAUTH2_PROXY_VERSION}.linux-amd64.go1.6.tar.gz -C /oauth2_proxy --strip-components=1 --no-same-owner \
-    && rm oauth2_proxy-${OAUTH2_PROXY_VERSION}.linux-amd64.go1.6.tar.gz \
+    && tar -xf oauth2_proxy-${OAUTH2_PROXY_VERSION}.0.linux-amd64.go${GO_VERSION}.tar.gz -C /oauth2_proxy --strip-components=1 --no-same-owner \
+    && rm oauth2_proxy-${OAUTH2_PROXY_VERSION}.0.linux-amd64.go${GO_VERSION}.tar.gz \
     \
     && curl -O -fSL "https://raw.githubusercontent.com/bitly/oauth2_proxy/v${OAUTH2_PROXY_VERSION}/contrib/oauth2_proxy.cfg.example" \
     && mkdir /conf \
@@ -45,4 +46,3 @@ COPY docker-entrypoint.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
 CMD ["oauth2_proxy", "--config", "/conf/oauth2_proxy.cfg"]
-
